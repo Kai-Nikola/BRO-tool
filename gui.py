@@ -12,7 +12,7 @@ import os
 import sys
 
 # Ensure the local processor module is importable when run directly
-sys.path.insert(0, os.path.dirname(__file__))
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from processor import run_correction
 
 
@@ -118,7 +118,7 @@ class App(tk.Tk):
                  bg=PANEL_BG, fg=ACCENT,
                  font=("Segoe UI", 13, "bold")).pack(side="left", padx=20, pady=14)
 
-        tk.Label(topbar, text="v1.9 (AOI Enabled)",
+        tk.Label(topbar, text="v2.0 (90° Orthogonal Trim & Smart Move)",
                  bg=PANEL_BG, fg=TEXT_MUTED,
                  font=("Segoe UI", 9)).pack(side="right", padx=20)
 
@@ -186,16 +186,28 @@ class App(tk.Tk):
             "cursor": "hand2"
         }
 
-        cb_trim = tk.Checkbutton(action_frame, text="Enable Trimming (Trim Conflict Edges)", 
-                                 variable=self._enable_trim_var, **cb_style)
+        cb_trim = tk.Checkbutton(
+            action_frame,
+            text="Enable 90° Orthogonal Trimming (Perpendicular to Polygon Edges)",
+            variable=self._enable_trim_var,
+            **cb_style
+        )
         cb_trim.pack(anchor="w", pady=1)
 
-        cb_move = tk.Checkbutton(action_frame, text="Enable Shifting (Smart Move Patches)", 
-                                 variable=self._enable_move_var, **cb_style)
+        cb_move = tk.Checkbutton(
+            action_frame,
+            text="Enable Shifting (Standalone 1st Priority & Patches <= 2.0m)",
+            variable=self._enable_move_var,
+            **cb_style
+        )
         cb_move.pack(anchor="w", pady=1)
 
-        cb_delete = tk.Checkbutton(action_frame, text="Enable Purging (Delete Small Slivers <3m²)", 
-                                   variable=self._enable_delete_var, **cb_style)
+        cb_delete = tk.Checkbutton(
+            action_frame,
+            text="Enable Purging (Delete Small Slivers <3m²)",
+            variable=self._enable_delete_var,
+            **cb_style
+        )
         cb_delete.pack(anchor="w", pady=1)
 
         # Section: Output
@@ -288,8 +300,8 @@ class App(tk.Tk):
 
         cards_data = [
             ("Total Overlaps Detected", ACCENT,      "total_overlap"),
-            ("Corrected (Trimmed)",     SUCCESS,     "corrected"),
-            ("Shifted (Moved Patch)",   MOVED_COLOR, "moved"),
+            ("Corrected (90° Trimmed)", SUCCESS,     "corrected"),
+            ("Shifted (Moved <=2m)",    MOVED_COLOR, "moved"),
             ("Deleted (<3 sq m)",       DANGER,      "deleted"),
             ("Unresolved",              UNRESOLVED,  "unresolved"),
         ]
